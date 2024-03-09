@@ -1,0 +1,113 @@
+<h1 id="цель-работы">Цель работы</h1>
+<p>Построить модель Лотки-Вольтерра.</p>
+<hr />
+<h1 id="задание">Задание</h1>
+<ol type="1">
+<li>Создать модель по данной системе дифференциальных уравнений:</li>
+<li>Построить графики измениния числа особей.</li>
+<li>Найти стационарную точку.</li>
+</ol>
+<hr />
+<h1 id="теоретическое-введение">Теоретическое введение</h1>
+<p>Простейшая модель взаимодействия двух видов типа «хищник-жертва» – модель Лотки-Вольтерры. Данная двувидовая модель основывается на следующих предположениях:</p>
+<ol type="1">
+<li>Численность популяции жертв x и хищников y зависят только от времени (модель не учитывает пространственное распределение популяции на занимаемой территории)</li>
+<li>В отсутствии взаимодействия численность видов изменяется по модели Мальтуса, при этом число жертв увеличивается, а число хищников падает</li>
+<li>Естественная смертность жертвы и естественная рождаемость хищника считаются несущественными</li>
+<li>Эффект насыщения численности обеих популяций не учитывается</li>
+<li>Скорость роста численности жертв уменьшается пропорционально численности хищников</li>
+</ol>
+<hr />
+<h1 id="теоретическое-введение-1">Теоретическое введение</h1>
+<p><span class="math display">$$
+\begin{cases}
+ \dot{x} = ax - bxy \\
+ \dot{y} = -cy + dxy.
+\end{cases}
+$$</span></p>
+<p>В этой модели x – число жертв, y - число хищников. Коэффициент a описывает скорость естественного прироста числа жертв в отсутствие хищников, с – естественное вымирание хищников, лишенных пищи в виде жертв. Вероятность взаимодействия жертвы и хищника считается пропорциональной как количеству жертв, так и числу самих хищников (xy). Каждый акт взаимодействия уменьшает популяцию жертв, но способствует увеличению популяции хищников (члены -bxy и dxy в правой части уравнения).</p>
+<hr />
+<h1 id="теоретическое-введение-2">Теоретическое введение</h1>
+<p>Математический анализ этой (жесткой) модели показывает, что имеется стационарное состояние, всякое же другое начальное состояние приводит к периодическому колебанию численности как жертв, так и хищников, так что по прошествии некоторого времени система возвращается в начальное состояние.</p>
+<p>Стационарное состояние системы (положение равновесия, не зависящее от времени решение) будет в точке: <span class="math inline">$x_0 = \frac{c}{d}, y_0 = \frac{a}{b}$</span>. При малом отклонении от положения равновесия численности как хищника, так и жертвы с течением времени не возвращаются к равновесным значениям, а совершают периодические колебания вокруг стационарной точки. Амплитуда колебаний и их период определяется начальными значениями численностей особей. Колебания совершаются в противофазе.</p>
+<hr />
+<h1 id="моделирование-в-julia">Моделирование в Julia</h1>
+<p>Для начала введем параметры задачи:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">0.19</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">0.026</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="fl">0.18</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="fl">0.032</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">,</span> <span class="fl">400</span>)<span class="op">;</span></span></code></pre></div>
+<p>Переменные <span class="math inline"><em>a</em>, <em>d</em></span> являются коэффициентами смертности, а <span class="math inline"><em>b</em>, <em>c</em></span> – коэффициенты рождаемости.</p>
+<hr />
+<h1 id="моделирование-в-julia-1">Моделирование в Julia</h1>
+<p>Далее введем систему дифференциальных уравнений, характеризующую нашу модель.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> syst<span class="op">!</span>(dx<span class="op">,</span>x<span class="op">,</span>p<span class="op">,</span>t)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">1</span>] <span class="op">=</span> <span class="op">-</span>a<span class="op">.*</span>x[<span class="fl">1</span>] <span class="op">+</span> b <span class="op">.*</span> x[<span class="fl">1</span>] <span class="op">*</span> x[<span class="fl">2</span>]<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">2</span>] <span class="op">=</span>  c<span class="op">.*</span>x[<span class="fl">2</span>] <span class="op">-</span> d <span class="op">.*</span> x[<span class="fl">1</span>] <span class="op">*</span> x[<span class="fl">2</span>]<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-2">Моделирование в Julia</h1>
+<p>Теперь введем начальные условия задачи:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> [<span class="fl">3</span><span class="op">,</span> <span class="fl">8</span>]<span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-3">Моделирование в Julia</h1>
+<p>Решим систему дифференциальных уравнений первого порядка и запишем <span class="math inline"><em>x</em></span>-ы в переменную <span class="math inline"><em>u</em><sub>1</sub></span>, а <span class="math inline"><em>y</em></span>-и в <span class="math inline"><em>u</em><sub>2</sub></span>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> ODEProblem(syst<span class="op">!,</span> x0<span class="op">,</span> t)<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> solve(prob<span class="op">,</span> Tsit5()<span class="op">,</span> saveat<span class="op">=</span><span class="fl">0.01</span>)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>u1 <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>u2 <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> range(<span class="fl">1</span><span class="op">,</span> length(y.t))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    push<span class="op">!</span>(u1<span class="op">,</span> y.u[i][<span class="fl">1</span>])<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    push<span class="op">!</span>(u2<span class="op">,</span> y.u[i][<span class="fl">2</span>])<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-4">Моделирование в Julia</h1>
+<p>Построим график зависимости количества жертв от количества хищников:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plot(u1<span class="op">,</span> u2<span class="op">,</span> label <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">,</span> title <span class="op">=</span> <span class="st">&quot;Модель Лотки-Вольтерра&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>savefig(<span class="st">&quot;name.png&quot;</span>)<span class="op">;</span></span></code></pre></div>
+<p>Также построим график изменения числа особей в популяциях:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> [<span class="fl">0</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">400</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plot(t1<span class="op">,</span> [u1<span class="op">,</span> u2]<span class="op">,</span> label <span class="op">=</span> [<span class="st">&quot;Хищники&quot;</span> <span class="st">&quot;Жертвы&quot;</span>]<span class="op">,</span> title <span class="op">=</span> <span class="st">&quot;Изменение числа особей в популяциях&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>savefig(<span class="st">&quot;name.png&quot;</span>)<span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-5">Моделирование в Julia</h1>
+<p>Зависимость количества жертв от количества хищников.</p>
+<h2 id="width600px"><img src="image/6.jpg" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-в-julia-6">Моделирование в Julia</h1>
+<p>Изменение числа особей в популяциях.</p>
+<h2 id="width600px-1"><img src="image/1.jpg" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-в-openmodelica">Моделирование в Openmodelica</h1>
+<p>Аналогично первому случаю введем параметры <span class="math inline"><em>a</em>, <em>b</em>, <em>c</em></span> и <span class="math inline"><em>d</em></span>:</p>
+<pre class="openmodelica"><code>parameter Real a = 0.19;
+parameter Real b = 0.026;
+parameter Real c = 0.18;
+parameter Real d = 0.032;</code></pre>
+<hr />
+<h1 id="моделирование-в-openmodelica-1">Моделирование в Openmodelica</h1>
+<p>Введем переменные <span class="math inline"><em>x</em>, <em>y</em></span>:</p>
+<pre class="openmodelica"><code>Real x(start=3);
+Real y(start=8);</code></pre>
+<p>Введем систему уравнений, описывающую нашу модель:</p>
+<pre class="openmodelica"><code>equation
+  der(x) = -a*x + b*x*y;
+  der(y) =  c*y + d*x*y;</code></pre>
+<hr />
+<h1 id="моделирование-в-openmodelica-2">Моделирование в Openmodelica</h1>
+<p>Зависимость количества жертв от количества хищников.</p>
+<h2 id="width600px-2"><img src="image/4.jpg" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-в-openmodelica-3">Моделирование в Openmodelica</h1>
+<p>Изменение числа особей в популяциях.</p>
+<h2 id="width600px-3"><img src="image/3.jpg" alt="width:600px" /></h2>
+<hr />
+<h1 id="стационарная-точка">Стационарная точка</h1>
+<p><span class="math display">$$
+x_0 = \frac{c}{d} = 0.5625, 
+y_0 = \frac{a}{b} \approx 7.3.
+$$</span></p>
+<hr />
+<h1 id="выводы">Выводы</h1>
+<p>Мы построили модель Лотки-Вольтерра и нашли стационарную точку.</p>
