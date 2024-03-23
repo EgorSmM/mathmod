@@ -1,0 +1,140 @@
+<style>
+section::after {
+  content: attr(data-marpit-pagination) '/' attr(data-marpit-pagination-total);
+}
+</style>
+<style>
+    section{
+        text-align: justify;
+        font-size: 25px;
+    }
+</style>
+<h1 id="задача-об-эпидемии">Задача об эпидемии <!-- fit --></h1>
+<style>
+    h2{
+        font-size: 30px;
+        text-align: center;
+    }
+    h3{
+        font-size: 20px;
+        text-align: center;
+    }
+</style>
+<h2 id="смирнов-мальцев-егор-дмитриевич">Смирнов-Мальцев Егор Дмитриевич</h2>
+<h3 id="pfur.ru">1032212272@pfur.ru</h3>
+<h3 id="российский-университет-дружбы-народов-им.-патриса-лумумбу-москва-россия">Российский университет дружбы народов им. Патриса Лумумбу, Москва, Россия</h3>
+<hr />
+<h1 id="цель-работы">Цель работы</h1>
+<p>Построить модель эпидемии в двух случаях:</p>
+<ol type="1">
+<li>Зараженные изолированы</li>
+<li>Зараженных не удается изолировать</li>
+</ol>
+<hr />
+<h1 id="задание">Задание</h1>
+<ol type="1">
+<li>Построить модели эпидемии в Julia</li>
+<li>Построить модели эпидемии в Openmodelica</li>
+</ol>
+<hr />
+<h1 id="теоретическое-введение">Теоретическое введение</h1>
+<p>Рассмотрим простейшую модель эпидемии. Предположим, что некая изолированная популяция, состоящая из <span class="math inline"><em>N</em></span> особей подразделяется на три группы. Первая группа – это восприимчивые к болезни, но пока здоровые особи. Обозначим их через <span class="math inline"><em>S</em>(<em>t</em>)</span>. Вторая группа –- это число инфицированных особей, которые являются распространителями инфекции. Обозначим их I(t). А третья группа, обозначающаяся через R(t) –- здоровые особи с иммунитетом к болезни. До того, как число заболевших не превышает критического значения $I^* $, считаем, что все больные изолированы и не заражают здоровых. Когда $I(t) &gt; I^* $, тогда инфицирование способны заражать восприимчивых к болезни особей. Таким образом, скорость изменения числа <span class="math inline"><em>S</em>(<em>t</em>)</span> меняется по следующему закону: <span class="math display">$$
+\begin{cases}
+ \dot{S(t)} = 0, I(t) \leq I^* \\
+ \dot{S(t)} = -aS(t), I(t) &gt; I^* .
+\end{cases}
+$$</span></p>
+<hr />
+<h1 id="теоретическое-введение-1">Теоретическое введение</h1>
+<p>Поскольку каждая восприимчивая к болезни особь, которая, в конце концов, заболевает, сама становится инфекционной, то скорость изменения числа инфекционных особей представляет разность за единицу времени между заразившимися и теми, кто уже болеет и лечится, т.е.: <span class="math display">$$
+\begin{cases}
+ \dot{I(t)} = -bI(t), I(t) \leq I^* \\
+ \dot{I(t)} = aS(t) - bI(t), I(t) &gt; I^* .
+\end{cases}
+$$</span></p>
+<hr />
+<h1 id="теоретическое-введение-2">Теоретическое введение</h1>
+<p>А скорость изменения выздоравливающих особей (при этом приобретающие иммунитет к болезни): <span class="math display">$$
+\dot{R(t)} = bI(t).
+$$</span></p>
+<hr />
+<h1 id="теоретическое-введение-3">Теоретическое введение</h1>
+<p>Для того, чтобы решения соответствующих уравнений определялось однозначно, необходимо задать начальные условия. Считаем, что в момент времени <span class="math inline"><em>t</em><sub>0</sub></span> нет особей с иммунитетом к болезни (<span class="math inline"><em>R</em>(<em>t</em><sub>0</sub>) = 0</span>), а число инфицированных и восприимчивых к болезни особей: <span class="math display"><em>I</em>(<em>t</em><sub>0</sub>) = <em>I</em><sub>0</sub>, <em>S</em>(<em>t</em><sub>0</sub>) = <em>S</em><sub>0</sub></span>.</p>
+<hr />
+<h1 id="выполнение-лабораторной-работы">Выполнение лабораторной работы</h1>
+<hr />
+<h1 id="моделирование-в-julia">Моделирование в Julia</h1>
+<p>Для начала введем параметры задачи:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="fl">0.1</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="fl">0.15</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span><span class="op">,</span> <span class="fl">100</span>)<span class="op">;</span></span></code></pre></div>
+<p>Переменные <span class="math inline"><em>a</em>, <em>b</em></span> являются коэффициентами заболеваемости и выздоровления соответственно.</p>
+<hr />
+<h1 id="моделирование-в-julia-1">Моделирование в Julia</h1>
+<p>Далее введем систему дифференциальных уравнений, характеризующую нашу модель.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> syst<span class="op">!</span>(dx<span class="op">,</span>x<span class="op">,</span>p<span class="op">,</span>t)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">1</span>] <span class="op">=</span> a<span class="op">*</span>x[<span class="fl">3</span>]<span class="op">-</span>b<span class="op">.*</span>x[<span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">2</span>] <span class="op">=</span> b<span class="op">.*</span>x[<span class="fl">1</span>]<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">3</span>] <span class="op">=</span> <span class="op">-</span>a<span class="op">*</span>x[<span class="fl">3</span>]<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-2">Моделирование в Julia</h1>
+<p>Теперь введем начальные условия задачи:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> [<span class="fl">45</span><span class="op">,</span> <span class="fl">3</span><span class="op">,</span> <span class="fl">5457</span>]<span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-3">Моделирование в Julia</h1>
+<p>Решим систему дифференциальных уравнений первого порядка и запишем <span class="math inline"><em>I</em>(<em>t</em>)</span> в переменную <span class="math inline"><em>u</em><sub>1</sub></span>, <span class="math inline"><em>R</em>(<em>t</em>)</span> – в <span class="math inline"><em>u</em><sub>2</sub></span>, а <span class="math inline"><em>S</em>(<em>t</em>)</span> в <span class="math inline"><em>u</em><sub>3</sub></span>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> ODEProblem(syst<span class="op">!,</span> x0<span class="op">,</span> t)<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> solve(prob<span class="op">,</span> Tsit5()<span class="op">,</span> saveat<span class="op">=</span><span class="fl">0.2</span>)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>u1 <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>u3 <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>u2 <span class="op">=</span> <span class="dt">Vector</span>{<span class="dt">Float64</span>}()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> range(<span class="fl">1</span><span class="op">,</span> length(y.t))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    push<span class="op">!</span>(u1<span class="op">,</span> y.u[i][<span class="fl">1</span>])<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    push<span class="op">!</span>(u2<span class="op">,</span> y.u[i][<span class="fl">2</span>])<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    push<span class="op">!</span>(u3<span class="op">,</span> y.u[i][<span class="fl">3</span>])<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-4">Моделирование в Julia</h1>
+<p>Построим график зависимости количества в каждой из групп от времени:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> [<span class="fl">0</span><span class="op">:</span><span class="fl">0.2</span><span class="op">:</span><span class="fl">100</span>]<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plot(t1<span class="op">,</span> [u2<span class="op">,</span> u1<span class="op">,</span> u3]<span class="op">,</span> label <span class="op">=</span> [<span class="st">&quot;Число восстановившихся&quot;</span> <span class="st">&quot;Число заболевших&quot;</span> <span class="st">&quot;Число неконтактировавших&quot;</span>]<span class="op">,</span> title <span class="op">=</span> <span class="st">&quot;Модель эпидемии&quot;</span>)<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>savefig(<span class="st">&quot;name.png&quot;</span>)</span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-5">Моделирование в Julia</h1>
+<p>Число восстановившихся и болеющих при изоляции заболевших:</p>
+<h2 id="width600px"><img src="image/3.png" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-в-julia-6">Моделирование в Julia</h1>
+<p>Число восстановившихся и болеющих при невозможности изоляции заболевших:</p>
+<h2 id="width600px-1"><img src="image/4.png" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica">Моделирование с помощью Openmodelica</h1>
+<p>Аналогично первому случаю введем параметры <span class="math inline"><em>a</em>, <em>b</em></span>, а также параметр <span class="math inline"><em>N</em></span> – количество особей в популяции:</p>
+<pre class="openmodelica"><code>parameter Real N = 5505;
+parameter Real a = 0.10;
+parameter Real b = 0.15;</code></pre>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-1">Моделирование с помощью Openmodelica</h1>
+<p>Введем переменные <span class="math inline"><em>I</em>, <em>R</em>, <em>S</em></span>:</p>
+<pre class="openmodelica"><code>Real I(start=45);
+Real R(start=3);
+Real S(start=5457);</code></pre>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-2">Моделирование с помощью Openmodelica</h1>
+<p>Введем систему уравнений, описывающую нашу модель:</p>
+<pre class="openmodelica"><code>equation
+  der(I) = a*S-b*I;
+  der(R) = b*I;
+  der(S) = -a*S;</code></pre>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-3">Моделирование с помощью Openmodelica</h1>
+<p>Число восстановившихся и болеющих при изоляции заболевших:</p>
+<h2 id="width900px"><img src="image/1.png" alt="width:900px" /></h2>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-4">Моделирование с помощью Openmodelica</h1>
+<p>Число восстановившихся и болеющих при невозможности изоляции заболевших:</p>
+<h2 id="width900px-1"><img src="image/2.png" alt="width:900px" /></h2>
+<hr />
+<h1 id="выводы">Выводы</h1>
+<p>Была построена модель эпидемии. В случае изоляции зоболевших число зараженных сразу падает. В случае невозможности изоляции число зараженных в какой-то момент достигает своего пика, а потом падает.</p>
