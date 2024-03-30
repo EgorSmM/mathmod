@@ -1,0 +1,197 @@
+<style>
+section::after {
+  content: attr(data-marpit-pagination) '/' attr(data-marpit-pagination-total);
+}
+</style>
+<style>
+    section{
+        text-align: justify;
+        font-size: 25px;
+    }
+</style>
+<h1 id="моделирование-конкуренции-2-фирм">Моделирование конкуренции 2
+фирм <!-- fit --></h1>
+<style>
+    h2{
+        font-size: 30px;
+        text-align: center;
+    }
+    h3{
+        font-size: 20px;
+        text-align: center;
+    }
+</style>
+<h2 id="смирнов-мальцев-егор-дмитриевич">Смирнов-Мальцев Егор
+Дмитриевич</h2>
+<h3 id="pfur.ru">1032212272@pfur.ru</h3>
+<h3
+id="российский-университет-дружбы-народов-им.-патриса-лумумбу-москва-россия">Российский
+университет дружбы народов им. Патриса Лумумбу, Москва, Россия</h3>
+<hr />
+<h1 id="цель-работы">Цель работы</h1>
+<p>Построить модели конкуренции двух фирм.</p>
+<hr />
+<h1 id="задание">Задание</h1>
+<ol type="1">
+<li>Создать модель конкуренции 2 фирм без учета
+социально-психологических факторов.</li>
+<li>Создать модель конкуренции 2 фирм с учетом социально-психологических
+факторов.</li>
+</ol>
+<hr />
+<h1 id="теоретическое-введение">Теоретическое введение</h1>
+<p>Рассмотрим две фирмы, производящие взаимозаменяемые товары
+одинакового качества и находящиеся в одной рыночной нише. Последнее
+означает, что у потребителей в этой нише нет априорных предпочтений, и
+они приобретут тот или иной товар, не обращая внимания на знак фирмы. В
+этом случае, на рынке устанавливается единая цена, которая определяется
+балансом суммарного предложения и спроса. Иными словами, в рамках
+нашеймодели конкурентная борьба ведётся только рыночными методами. То
+есть, конкуренты могут влиять на противника путем изменения параметров
+своего производства: себестоимость, время цикла, но не могут прямо
+вмешиваться в ситуацию на рынке («назначать» цену или влиять на
+потребителей каким-либо иным способом.)</p>
+<hr />
+<h1 id="теоретическое-введение-1">Теоретическое введение</h1>
+<p>Уравнения динамики оборотных средств запишем в виде: <span
+class="math display">$$
+\begin{cases}
+\dfrac{dM_1}{dt} =
+-\frac{M_1}{\tau_1}+N_1q(1-\frac{p}{p_{cr}}p-\kappa_1)
+\dfrac{dM_2}{dt} =
+-\frac{M_2}{\tau_1}+N_2q(1-\frac{p}{p_{cr}}p-\kappa_2),
+\end{cases}
+$$</span> где <span class="math inline"><em>κ</em><sub>1</sub></span> и
+<span class="math inline"><em>κ</em><sub>2</sub></span> меры
+эластичности функции спроса по цене, <span
+class="math inline"><em>p</em></span> – стоимость продукта, <span
+class="math inline"><em>p</em><sub><em>c</em><em>r</em></sub></span>
+критическая стоимость продукта, <span
+class="math inline"><em>q</em></span> – максимальная потребность одного
+человека в продукте в единицу времени, <span
+class="math inline"><em>N</em></span> – число потребителей производимого
+продукта, <span class="math inline"><em>M</em></span> – оборотные
+средства продукта.</p>
+<hr />
+<h1 id="теоретическое-введение-2">Теоретическое введение</h1>
+<p>Второй случай – когда используются психологические факторы. Модель в
+этом случае будет выглядеть следующим образом: <span
+class="math display">$$
+\begin{cases}
+\dfrac{dM_1}{dt} =
+-\frac{M_1}{\tau_1}+N_1q(1-\frac{p}{p_{cr}}p-\kappa_1)
+\dfrac{dM_2}{dt} =
+-\frac{M_2}{\tau_1}+N_2q(1-\frac{p}{p_{cr}}p-\kappa_2),
+\end{cases}
+$$</span></p>
+<hr />
+<h1 id="выполнение-лабораторной-работы">Выполнение лабораторной работы
+<!-- fit --></h1>
+<hr />
+<h1 id="моделирование-в-julia">Моделирование в Julia</h1>
+<p>Для начала введем параметры задачи:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>p_cr <span class="op">=</span> <span class="fl">27.0</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="fl">37.0</span>;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>q<span class="op">=</span><span class="fl">1.0</span>;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>tau_1 <span class="op">=</span> <span class="fl">17.0</span>;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>tau_2 <span class="op">=</span> <span class="fl">16.0</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>p_1_tilda <span class="op">=</span> <span class="fl">15</span>;</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>p_2_tilda <span class="op">=</span> <span class="fl">12</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>a_1 <span class="op">=</span> p_cr<span class="op">/</span>((tau_1)<span class="op">^</span><span class="fl">2</span><span class="fu">*</span>(p_1_tilda)<span class="op">^</span><span class="fl">2</span><span class="op">*</span>N<span class="op">*</span>q);</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>a_2 <span class="op">=</span> p_cr<span class="op">/</span>((tau_2)<span class="op">^</span><span class="fl">2</span><span class="fu">*</span>(p_2_tilda)<span class="op">^</span><span class="fl">2</span><span class="op">*</span>N<span class="op">*</span>q);</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> p_cr<span class="op">/</span>((tau_1)<span class="op">^</span><span class="fl">2</span><span class="fu">*</span>(p_1_tilda)<span class="op">^</span><span class="fl">2</span><span class="fu">*</span>(tau_2)<span class="op">^</span><span class="fl">2</span><span class="fu">*</span>(p_2_tilda)<span class="op">^</span><span class="fl">2</span><span class="op">*</span>N<span class="op">*</span>q);;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>c_1 <span class="op">=</span> (p_cr<span class="op">-</span>p_1_tilda)<span class="op">/</span>tau_1<span class="op">/</span>p_1_tilda;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>c_2 <span class="op">=</span> (p_cr<span class="op">-</span>p_2_tilda)<span class="op">/</span>tau_2<span class="op">/</span>p_2_tilda;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> (<span class="fl">0</span>, <span class="fl">25</span>)</span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-1">Моделирование в Julia</h1>
+<p>Далее введем систему дифференциальных уравнений, характеризующую нашу
+модель.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">syst!</span>(dx,x,p,t)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">1</span>] <span class="op">=</span> x[<span class="fl">1</span>]<span class="op">-</span>b<span class="op">/</span>c_1<span class="op">*</span>x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>]<span class="op">-</span>a_1<span class="op">/</span><span class="fu">c_1*</span>(x[<span class="fl">1</span>])<span class="op">^</span><span class="fl">2</span>;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dx[<span class="fl">2</span>] <span class="op">=</span> c_2<span class="op">/</span>c_1<span class="op">*</span>x[<span class="fl">2</span>]<span class="fu">-</span>(b<span class="op">/</span>c_1<span class="op">+</span><span class="fl">0.00024</span>)<span class="op">*</span>x[<span class="fl">1</span>]<span class="op">*</span>x[<span class="fl">2</span>]<span class="op">-</span>a_2<span class="op">/</span><span class="fu">c_1*</span>(x[<span class="fl">2</span>])<span class="op">^</span><span class="fl">2</span>;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span>;</span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-2">Моделирование в Julia</h1>
+<p>Теперь введем начальные условия задачи:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x0 <span class="op">=</span> [<span class="fl">7</span>, <span class="fl">7.7</span>];</span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-3">Моделирование в Julia</h1>
+<p>Решим дифференциальное уравнение первого порядка и запишем оборотные
+средства первой и второй фирм в переменные <span
+class="math inline"><em>u</em><sub>1</sub></span> и <span
+class="math inline"><em>u</em><sub>2</sub></span> соответственно:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prob <span class="op">=</span> <span class="fu">ODEProblem</span>(syst!, x0, t);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="fu">solve</span>(prob, <span class="fu">Tsit5</span>(), saveat<span class="op">=</span><span class="fl">0.01</span>);</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>u1 <span class="op">=</span> <span class="fu">Vector</span><span class="dt">{Float64}</span>()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>u2 <span class="op">=</span> <span class="fu">Vector</span><span class="dt">{Float64}</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fu">range</span>(<span class="fl">1</span>, <span class="fu">length</span>(y.t))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(u1, y.u[i][<span class="fl">1</span>]);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">push!</span>(u2, y.u[i][<span class="fl">2</span>]);</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span>;</span></code></pre></div>
+<hr />
+<h1 id="моделирование-в-julia-4">Моделирование в Julia</h1>
+<p>Построим график зависимости количества оборотных средств от
+времени:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode julia"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> [<span class="fl">0</span><span class="op">:</span><span class="fl">0.01</span><span class="op">:</span><span class="fl">25</span>];</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(t1<span class="op">./</span>c_1, [u1, u2], label <span class="op">=</span> [<span class="st">&quot;Фирма 1&quot;</span> <span class="st">&quot;Фирма 2&quot;</span>], title <span class="op">=</span> <span class="st">&quot;Изменение оборотных средств&quot;</span>);</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">xlabel!</span>(<span class="st">&quot;Нормированное время&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ylabel!</span>(<span class="st">&quot;Оборотные средства&quot;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">&quot;name.png&quot;</span>)</span></code></pre></div>
+<hr />
+<h1 id="конкуренция-фирм-без-учета-психологических-факторов">Конкуренция
+фирм без учета психологических факторов</h1>
+<h2 id="width600px"><img src="image/1.png" alt="width:600px" /></h2>
+<hr />
+<h1 id="конкуренция-фирм-с-учетом-психологических-факторов">Конкуренция
+фирм с учетом психологических факторов</h1>
+<h2 id="width600px-1"><img src="image/2.png" alt="width:600px" /></h2>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica">Моделирование с помощью
+Openmodelica</h1>
+<p>Введем параметры задачи:</p>
+<pre class="openmodelica"><code>parameter Real p_cr = 27.0;
+parameter Real N=37.0;
+parameter Real q=1.0;
+parameter Real tau_1 = 17.0;
+parameter Real tau_2 = 16.0;
+parameter Real p_1_tilda = 15;
+parameter Real p_2_tilda = 12;
+
+parameter Real a_1 = p_cr/((tau_1)^2*(p_1_tilda)^2*N*q);
+parameter Real a_2 = p_cr/((tau_2)^2*(p_2_tilda)^2*N*q);
+parameter Real b = p_cr/((tau_1)^2*(p_1_tilda)^2*(tau_2)^2*(p_2_tilda)^2*N*q);
+parameter Real c_1 = (p_cr-p_1_tilda)/tau_1/p_1_tilda;
+parameter Real c_2 = (p_cr-p_2_tilda)/tau_2/p_2_tilda;</code></pre>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-1">Моделирование с помощью
+Openmodelica</h1>
+<p>Введем переменные:</p>
+<pre class="openmodelica"><code>Real M1(start=7);
+Real M2(start=7.7);</code></pre>
+<hr />
+<h1 id="моделирование-с-помощью-openmodelica-2">Моделирование с помощью
+Openmodelica</h1>
+<p>Введем систему уравнений, описывающую нашу модель:</p>
+<pre class="openmodelica"><code>equation
+  der(M1) = M1-b/c_1*M1*M2-a_1/c_1*(M1)^2;
+  der(M2) = c_2/c_1*M2-(b/c_1)*M1*M2-a_2/c_1*(M2)^2; </code></pre>
+<hr />
+<h1
+id="конкуренция-фирм-без-учета-психологических-факторов-1">Конкуренция
+фирм без учета психологических факторов</h1>
+<h2 id="width600px-2"><img src="image/1om.png" alt="width:600px" /></h2>
+<hr />
+<h1
+id="конкуренция-фирм-с-учетом-психологических-факторов-1">Конкуренция
+фирм с учетом психологических факторов</h1>
+<h2 id="width600px-3"><img src="image/2om.png" alt="width:600px" /></h2>
+<hr />
+<h1 id="выводы">Выводы</h1>
+<p>Мы построили модели конкуренции 2 фирм.</p>
